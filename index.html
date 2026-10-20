@@ -1,0 +1,768 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cubexa — Train smarter. Turn faster.</title>
+
+  <style>
+    :root {
+      --bg: #0b0e17;
+      --panel: #121725;
+      --panel-light: #192033;
+      --border: #293249;
+      --text: #f2f5ff;
+      --muted: #8994ad;
+      --blue: #7189ff;
+      --blue-light: #a6b4ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 50% 0%, #1a2140 0%, transparent 50%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+    }
+
+    button, a {
+      font: inherit;
+    }
+
+    /* HEADER */
+
+    header {
+      height: 84px;
+      padding: 0 6%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      background: rgba(11,14,23,0.8);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Actual 2x2 cube logo */
+
+    .cube-logo {
+      width: 43px;
+      height: 43px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 3px;
+      padding: 4px;
+      border-radius: 9px;
+      background: linear-gradient(145deg, #8196ff, #4a5ce0);
+      transform: rotate(-5deg);
+      box-shadow: 0 4px 18px #617aff35;
+    }
+
+    .cube-logo span {
+      background: #eef1ff;
+      border-radius: 3px;
+      box-shadow: inset -2px -2px 0 #b3bdf1;
+    }
+
+    .cube-logo span:nth-child(2) {
+      background: #a8f0bd;
+      box-shadow: inset -2px -2px 0 #67b780;
+    }
+
+    .cube-logo span:nth-child(3) {
+      background: #ffcf76;
+      box-shadow: inset -2px -2px 0 #d99c3c;
+    }
+
+    .cube-logo span:nth-child(4) {
+      background: #f5f6ff;
+    }
+
+    .brand-name {
+      font-size: 23px;
+      font-weight: 850;
+      letter-spacing: -1px;
+    }
+
+    .brand-name span {
+      color: var(--blue-light);
+    }
+
+    .brand-slogan {
+      color: var(--muted);
+      font-size: 11px;
+      margin: 2px 0 0;
+      letter-spacing: 0.3px;
+    }
+
+    .header-link {
+      color: #dce3ff;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 15px;
+      font-size: 13px;
+      transition: 0.2s;
+    }
+
+    .header-link:hover {
+      border-color: var(--blue);
+      background: #7189ff12;
+    }
+
+    /* MAIN CONTENT */
+
+    main {
+      width: min(1150px, 90%);
+      margin: 0 auto;
+      padding: 76px 0 90px;
+    }
+
+    .intro {
+      text-align: center;
+      margin-bottom: 46px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border: 1px solid #7189ff35;
+      border-radius: 30px;
+      background: #7189ff0d;
+      color: var(--blue-light);
+      font-size: 12px;
+      font-weight: 650;
+      margin-bottom: 19px;
+    }
+
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      background: #8da0ff;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #7189ff;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 54px);
+      letter-spacing: -2px;
+      line-height: 1.1;
+    }
+
+    h1 span {
+      background: linear-gradient(90deg, #aabaff, #7189ff, #b8a1ff);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .intro p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+      max-width: 490px;
+      margin: 17px auto 0;
+    }
+
+    /* SECTION CARDS */
+
+    .sections {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .card {
+      min-width: 0;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 25px;
+      background: linear-gradient(150deg, #151b2c, #101522);
+      box-shadow: 0 15px 50px #00000016;
+    }
+
+    .cfop-card {
+      border-color: #657bdf75;
+      box-shadow: 0 0 35px #7189ff0a;
+    }
+
+    .card-heading {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      margin-bottom: 22px;
+    }
+
+    .section-icon {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: #7189ff18;
+      color: var(--blue-light);
+      font-size: 22px;
+    }
+
+    .disabled-card .section-icon {
+      background: #ffffff08;
+      color: #667087;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 19px;
+      letter-spacing: -0.4px;
+    }
+
+    .card-subtitle {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .status {
+      margin-left: auto;
+      align-self: flex-start;
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      padding: 6px 8px;
+      border-radius: 6px;
+      background: #7189ff18;
+      color: var(--blue-light);
+    }
+
+    .disabled-card .status {
+      background: #ffffff08;
+      color: #70798e;
+    }
+
+    /* CFOP BUTTONS */
+
+    .stage-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .stage-button {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+      text-align: left;
+      padding: 15px 16px;
+      border-radius: 11px;
+      border: 1px solid #303950;
+      background: #171e30;
+      color: var(--text);
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.18s, border-color 0.18s,
+                  background 0.18s;
+    }
+
+    .stage-button:hover {
+      transform: translateY(-2px);
+      border-color: #758bff;
+      background: #202943;
+    }
+
+    .stage-button.oll {
+      border-color: #7189ff;
+      background: linear-gradient(110deg, #526be8, #6958d9);
+      box-shadow: 0 5px 18px #526be82b;
+    }
+
+    .stage-button.oll:hover {
+      background: linear-gradient(110deg, #657df5, #7a68ed);
+      border-color: #a8b6ff;
+    }
+
+    .stage-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .stage-number {
+      width: 29px;
+      height: 29px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: #ffffff0b;
+      color: #a7b2ca;
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .oll .stage-number {
+      color: white;
+      background: #ffffff20;
+    }
+
+    .stage-name {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .stage-description {
+      font-size: 11px;
+      color: #9ba6bf;
+      margin-top: 3px;
+    }
+
+    .oll .stage-description {
+      color: #e0e5ff;
+    }
+
+    .arrow {
+      font-size: 18px;
+      color: #7f8ba5;
+    }
+
+    .oll .arrow {
+      color: white;
+    }
+
+    /* COMING SOON CARDS */
+
+    .disabled-card {
+      background: linear-gradient(150deg, #121622, #0f131e);
+      border-color: #222939;
+      color: #858da0;
+    }
+
+    .disabled-dropdown {
+      width: 100%;
+      margin-top: 4px;
+      padding: 14px;
+      border: 1px solid #252c3b;
+      border-radius: 10px;
+      background: #171b27;
+      color: #606a7e;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      cursor: not-allowed;
+    }
+
+    .disabled-dropdown:disabled {
+      opacity: 1;
+    }
+
+    .disabled-content {
+      margin-top: 16px;
+      padding: 20px 13px;
+      text-align: center;
+      border: 1px dashed #293043;
+      border-radius: 11px;
+      background: #ffffff02;
+    }
+
+    .lock-icon {
+      font-size: 23px;
+      margin-bottom: 10px;
+      opacity: 0.55;
+    }
+
+    .disabled-content strong {
+      display: block;
+      font-size: 13px;
+      color: #858da0;
+      margin-bottom: 7px;
+    }
+
+    .disabled-content p {
+      margin: 0;
+      color: #626d82;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .progress-track {
+      height: 4px;
+      margin-top: 19px;
+      border-radius: 10px;
+      background: #252b39;
+      overflow: hidden;
+    }
+
+    .progress-track span {
+      display: block;
+      width: 8%;
+      height: 100%;
+      background: #4b5368;
+      border-radius: inherit;
+    }
+
+    /* FOOTER */
+
+    footer {
+      border-top: 1px solid #ffffff0b;
+      padding: 22px 6%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: #68738b;
+      font-size: 12px;
+    }
+
+    .footer-brand {
+      color: #9ba6bf;
+      font-weight: 750;
+    }
+
+    /* WORK IN PROGRESS MESSAGE */
+
+    .toast {
+      position: fixed;
+      z-index: 10;
+      left: 50%;
+      bottom: 28px;
+      transform: translate(-50%, 20px);
+      width: min(420px, calc(100% - 32px));
+      padding: 16px 18px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      border: 1px solid #5367b4;
+      border-radius: 14px;
+      background: #171e32;
+      box-shadow: 0 15px 50px #0008;
+      opacity: 0;
+      pointer-events: none;
+      transition: 0.25s;
+    }
+
+    .toast.visible {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .toast-icon {
+      font-size: 20px;
+    }
+
+    .toast strong {
+      display: block;
+      color: white;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .toast p {
+      margin: 0;
+      color: #a5afc7;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 900px) {
+      .sections {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .cfop-card {
+        grid-row: span 2;
+      }
+    }
+
+    @media (max-width: 600px) {
+      header {
+        height: 74px;
+        padding: 0 5%;
+      }
+
+      .brand-name {
+        font-size: 20px;
+      }
+
+      .cube-logo {
+        width: 38px;
+        height: 38px;
+      }
+
+      .header-link {
+        padding: 9px 10px;
+        font-size: 11px;
+      }
+
+      main {
+        width: 90%;
+        padding-top: 53px;
+      }
+
+      .intro {
+        margin-bottom: 32px;
+      }
+
+      h1 {
+        letter-spacing: -1.4px;
+      }
+
+      .sections {
+        grid-template-columns: 1fr;
+      }
+
+      .cfop-card {
+        grid-row: auto;
+      }
+
+      .card {
+        padding: 21px;
+      }
+
+      footer {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <a class="brand" href="index.html" aria-label="Cubexa homepage">
+      <div class="cube-logo" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div>
+        <div class="brand-name">Cubexa<span>.</span></div>
+        <p class="brand-slogan">Train smarter. Turn faster.</p>
+      </div>
+    </a>
+
+    <a class="header-link" href="oll.html">
+      <span aria-hidden="true">▦</span> OLL Training ↗
+    </a>
+  </header>
+
+  <main>
+    <section class="intro">
+      <div class="eyebrow">
+        <span class="eyebrow-dot"></span>
+        YOUR SPEEDCUBING WORKSPACE
+      </div>
+
+      <h1>Choose your <span>training.</span></h1>
+
+      <p>
+        Master every stage, sharpen your recognition, and build
+        your speed one algorithm at a time.
+      </p>
+    </section>
+
+    <section class="sections" aria-label="Training categories">
+
+      <!-- CFOP -->
+      <article class="card cfop-card">
+        <div class="card-heading">
+          <div class="section-icon" aria-hidden="true">▦</div>
+
+          <div>
+            <h2>CFOP</h2>
+            <p class="card-subtitle">Your solving method</p>
+          </div>
+
+          <span class="status">1 available</span>
+        </div>
+
+        <div class="stage-list">
+          <button class="stage-button" type="button"
+                  data-stage="Cross">
+            <span class="stage-left">
+              <span class="stage-number">01</span>
+              <span>
+                <span class="stage-name">Cross</span>
+                <span class="stage-description" style="display:block">
+                  Build the foundation
+                </span>
+              </span>
+            </span>
+            <span class="arrow">›</span>
+          </button>
+
+          <button class="stage-button" type="button"
+                  data-stage="F2L">
+            <span class="stage-left">
+              <span class="stage-number">02</span>
+              <span>
+                <span class="stage-name">F2L</span>
+                <span class="stage-description" style="display:block">
+                  First two layers
+                </span>
+              </span>
+            </span>
+            <span class="arrow">›</span>
+          </button>
+
+          <a class="stage-button oll" href="oll.html">
+            <span class="stage-left">
+              <span class="stage-number">03</span>
+              <span>
+                <span class="stage-name">OLL</span>
+                <span class="stage-description" style="display:block">
+                  Orientation of the last layer
+                </span>
+              </span>
+            </span>
+            <span class="arrow">↗</span>
+          </a>
+
+          <button class="stage-button" type="button"
+                  data-stage="PLL">
+            <span class="stage-left">
+              <span class="stage-number">04</span>
+              <span>
+                <span class="stage-name">PLL</span>
+                <span class="stage-description" style="display:block">
+                  Permutation of the last layer
+                </span>
+              </span>
+            </span>
+            <span class="arrow">›</span>
+          </button>
+        </div>
+      </article>
+
+      <!-- FUTURE SECTION ONE -->
+      <article class="card disabled-card">
+        <div class="card-heading">
+          <div class="section-icon" aria-hidden="true">◇</div>
+
+          <div>
+            <h2>Training Hub</h2>
+            <p class="card-subtitle">More ways to practise</p>
+          </div>
+        </div>
+
+        <button class="disabled-dropdown" type="button" disabled
+                aria-label="Training Hub unavailable">
+          <span>Choose a mode</span>
+          <span aria-hidden="true">▾</span>
+        </button>
+
+        <div class="disabled-content">
+          <div class="lock-icon" aria-hidden="true">⌑</div>
+          <strong>Something new is coming</strong>
+          <p>
+            New training modes are in development.
+            This section will be available in a future update.
+          </p>
+          <div class="progress-track"><span></span></div>
+        </div>
+      </article>
+
+      <!-- FUTURE SECTION TWO -->
+      
+<article class="card">
+  <div class="card-heading">
+    <div class="section-icon" aria-hidden="true">⏱</div>
+    <div>
+      <h2>Speedcube Timer</h2>
+      <p class="card-subtitle">Time your solves</p>
+    </div>
+    <span class="status">Available</span>
+  </div>
+
+  <div class="disabled-content">
+    <div class="lock-icon" aria-hidden="true">⏱</div>
+    <strong>Ready, set, solve!</strong>
+    <p>
+      Time your solves, record penalties, track your averages
+      and keep a history of your sessions.
+    </p>
+  </div>
+
+  <a href="timer.html" class="stage-button oll" style="margin-top:16px">
+    <span class="stage-name">Open Speedcube Trainer</span>
+    <span class="arrow">↗</span>
+  </a>
+</article>
+
+      
+
+    </section>
+  </main>
+
+  <footer>
+    <span class="footer-brand">Cubexa.</span>
+    <span>Train smarter. Turn faster.</span>
+    <span>Built for speedcubers.</span>
+  </footer>
+
+  <!-- Work in progress notification -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <div class="toast-icon" aria-hidden="true">🚧</div>
+    <div>
+      <strong id="toastTitle">Work in progress</strong>
+      <p id="toastMessage">
+        This section is still being developed. Check back soon!
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const toast = document.getElementById("toast");
+    const toastTitle = document.getElementById("toastTitle");
+    const toastMessage = document.getElementById("toastMessage");
+
+    let toastTimer;
+
+    document.querySelectorAll("[data-stage]").forEach(button => {
+      button.addEventListener("click", () => {
+        const stage = button.dataset.stage;
+
+        toastTitle.textContent = stage + " — Work in progress";
+        toastMessage.textContent =
+          "The " + stage +
+          " training section isn't ready yet. You can return home or try OLL in the meantime.";
+
+        toast.classList.add("visible");
+
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.classList.remove("visible");
+        }, 4500);
+      });
+    });
+  </script>
+</body>
+</html>
