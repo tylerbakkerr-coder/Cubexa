@@ -1,0 +1,685 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cubexa Speedcube Trainer</title>
+<style>
+:root {
+  --bg:#0b0e17; --panel:#131827; --panel2:#191f30;
+  --border:#293249; --text:#f2f5ff; --muted:#8994ad;
+  --blue:#7189ff; --green:#75e0a0; --red:#ff7f91;
+}
+* { box-sizing:border-box }
+body {
+  margin:0; min-height:100vh; background:
+  radial-gradient(ellipse at 50% 0%,#1a2140,transparent 55%),var(--bg);
+  color:var(--text);font-family:Inter,system-ui,sans-serif;
+}
+button,select { font:inherit }
+button,a,select { -webkit-tap-highlight-color:transparent }
+a { color:inherit;text-decoration:none }
+header {
+  min-height:78px;padding:15px 5%;display:flex;align-items:center;
+  justify-content:space-between;gap:15px;border-bottom:1px solid #ffffff10;
+}
+.brand { display:flex;align-items:center;gap:12px }
+.cube-logo {
+  width:40px;height:40px;padding:4px;display:grid;
+  grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr);
+  gap:3px;border-radius:8px;background:linear-gradient(140deg,#8196ff,#4a5ce0);
+  transform:rotate(-5deg);
+}
+.cube-logo span { background:#eef1ff;border-radius:3px }
+.cube-logo span:nth-child(2){background:#a8f0bd}
+.cube-logo span:nth-child(3){background:#ffcf76}
+.brand-name{font-size:22px;font-weight:850;letter-spacing:-1px}
+.slogan{margin:2px 0 0;color:var(--muted);font-size:11px}
+.btn {
+  border:1px solid var(--border);background:var(--panel2);color:var(--text);
+  border-radius:10px;padding:10px 14px;cursor:pointer;transition:.15s;
+}
+.btn:hover{border-color:var(--blue)}
+.btn.primary{background:#526be8;border-color:#7189ff}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+main{width:min(1050px,92%);margin:auto;padding:35px 0 60px}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+h1{font-size:clamp(25px,4vw,36px);letter-spacing:-1.2px;margin:0}
+.sub{color:var(--muted);font-size:13px;margin-top:7px}
+.session-actions{display:flex;gap:8px;flex-wrap:wrap}
+.stats{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;margin:25px 0;
+}
+.stat,.panel{background:var(--panel);border:1px solid var(--border);border-radius:15px}
+.stat{padding:16px}
+.stat-label{font-size:12px;color:var(--muted)}
+.stat-value{font-size:clamp(20px,3vw,27px);font-weight:800;margin-top:9px;font-variant-numeric:tabular-nums}
+.timer-panel{padding:22px;text-align:center}
+.timer-area{
+  min-height:255px;display:flex;flex-direction:column;justify-content:center;
+  align-items:center;gap:12px;outline:none;user-select:none;
+  -webkit-user-select:none;touch-action:pan-y;cursor:pointer;
+}
+.timer-status{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1.6px}
+#timer{
+  font-size:clamp(65px,13vw,110px);font-weight:800;letter-spacing:-5px;
+  font-variant-numeric:tabular-nums;line-height:1.2;color:var(--text);
+}
+#timer.ready{color:var(--green)}
+#timer.inspecting{color:#ffcf76}
+.timer-hint{color:var(--muted);font-size:13px;line-height:1.7}
+.keyboard{display:inline-block;border:1px solid #3a4359;border-bottom-width:3px;
+border-radius:6px;padding:2px 8px;color:#dce3ff;font-size:12px}
+.scramble{border-top:1px solid var(--border);padding-top:18px;margin-top:5px}
+.scramble-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+#scramble{font-size:17px;line-height:1.8;margin-top:8px;word-spacing:5px}
+.penalty-row{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:17px}
+.penalty-row button{min-width:88px}
+.solve-layout{display:grid;grid-template-columns:1.25fr 1fr;gap:16px;margin-top:20px}
+.panel{padding:20px;min-width:0}
+.panel h2{font-size:17px;margin:0 0 16px}
+.averages{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.average{background:var(--panel2);padding:13px;border-radius:10px}
+.average span{display:block;color:var(--muted);font-size:12px}
+.average strong{display:block;margin-top:8px;font-size:21px;font-variant-numeric:tabular-nums}
+.average small{display:block;margin-top:4px;color:var(--muted);font-size:10px}
+.solve-list{display:flex;flex-direction:column;gap:7px;max-height:340px;overflow:auto}
+.solve{
+  display:grid;grid-template-columns:35px 1fr auto;align-items:center;gap:8px;
+  padding:10px 11px;background:var(--panel2);border-radius:9px;font-size:13px;
+}
+.solve-number{color:var(--muted)}
+.solve-time{font-weight:750;font-variant-numeric:tabular-nums}
+.solve-detail{color:var(--muted);font-size:11px;margin-top:3px}
+.solve-actions{display:flex;gap:5px}
+.small-btn{border:1px solid var(--border);background:#20283a;color:var(--text);
+border-radius:6px;padding:5px 7px;font-size:11px;cursor:pointer}
+.small-btn:hover{border-color:var(--blue)}
+.empty{color:var(--muted);font-size:13px;padding:18px 0;line-height:1.6}
+footer{text-align:center;color:#68738b;font-size:12px;padding:20px}
+.modal-backdrop{
+  position:fixed;inset:0;background:#050711d9;z-index:10;display:none;
+  align-items:center;justify-content:center;padding:18px;
+}
+.modal-backdrop.open{display:flex}
+.modal{width:min(500px,100%);max-height:85vh;overflow:auto;background:var(--panel);
+border:1px solid var(--border);border-radius:16px;padding:22px}
+.modal h2{margin:0 0 8px}
+.modal p{font-size:13px;color:var(--muted);line-height:1.6}
+.modal select{width:100%;background:var(--panel2);color:var(--text);
+border:1px solid var(--border);padding:12px;border-radius:9px;margin:10px 0}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:15px}
+.notice{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.6}
+@media(max-width:700px){
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .solve-layout{grid-template-columns:1fr}
+  .timer-panel{padding:14px}
+  .timer-area{min-height:225px}
+  #timer{letter-spacing:-3px}
+  .panel{padding:16px}
+  header{padding:13px 4%}
+  .brand-name{font-size:20px}
+  .btn{padding:9px 11px;font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="brand" aria-label="Cubexa home">
+    <div class="cube-logo" aria-hidden="true">
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <div>
+      <div class="brand-name">Cubexa.</div>
+      <p class="slogan">Train smarter. Turn faster.</p>
+    </div>
+  </a>
+  <a class="btn" href="index.html">← Home</a>
+</header>
+
+<main>
+  <div class="topline">
+    <div>
+      <h1>Speedcube Trainer</h1>
+      <div class="sub" id="sessionLabel">Session 1</div>
+    </div>
+    <div class="session-actions">
+      <button class="btn" id="newSession">＋ New session</button>
+      <button class="btn" id="openSessions">↻ Previous sessions</button>
+    </div>
+  </div>
+
+  <section class="stats">
+    <div class="stat"><div class="stat-label">Solves</div><div class="stat-value" id="solveCount">0</div></div>
+    <div class="stat"><div class="stat-label">Best time</div><div class="stat-value" id="bestTime">—</div></div>
+    <div class="stat"><div class="stat-label">Slowest time</div><div class="stat-value" id="worstTime">—</div></div>
+    <div class="stat"><div class="stat-label">Session mean</div><div class="stat-value" id="sessionMean">—</div></div>
+  </section>
+
+  <section class="panel timer-panel">
+    <div class="timer-area" id="timerArea" tabindex="0" role="button"
+         aria-label="Speedcube timer. Hold Space or press with two fingers to inspect.">
+      <div class="timer-status" id="timerStatus">Ready to solve?</div>
+      <div id="timer">0.00</div>
+      <div class="timer-hint" id="timerHint">
+        Hold <span class="keyboard">SPACE</span> for 1 second, then release to start.<br>
+        On touchscreens, press and hold with two fingers.
+      </div>
+    </div>
+    <div class="scramble">
+      <div class="scramble-label">Practice scramble</div>
+      <div id="scramble">R U R' U' F2 D L2 U2</div>
+      <button class="btn" id="newScramble" style="margin-top:10px">↻ New scramble</button>
+    </div>
+    <div class="penalty-row" id="penaltyRow" hidden>
+      <button class="btn primary" id="saveOK">OK · Save time</button>
+      <button class="btn" id="savePlus2">+2 seconds</button>
+      <button class="btn" id="saveDNF">DNF</button>
+    </div>
+    <div class="notice" id="penaltyHint" hidden>
+      Choose a penalty to save this solve. You can also change it later in the solve list.
+    </div>
+  </section>
+
+  <div class="solve-layout">
+    <section class="panel">
+      <h2>Rolling averages</h2>
+      <div class="averages">
+        <div class="average"><span>Average of 3</span><strong id="ao3">—</strong><small id="ao3note">Need 3 solves</small></div>
+        <div class="average"><span>Average of 5</span><strong id="ao5">—</strong><small id="ao5note">Need 5 solves</small></div>
+        <div class="average"><span>Average of 10</span><strong id="ao10">—</strong><small id="ao10note">Need 10 solves</small></div>
+        <div class="average"><span>Average of 20</span><strong id="ao20">—</strong><small id="ao20note">Need 20 solves</small></div>
+      </div>
+      <p class="notice">Averages use the most recent solves. For averages of 5, 10 and 20, the fastest and slowest results are excluded. DNF counts as an unsolved result unless it is the excluded slowest result.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Solves in this session</h2>
+      <div class="solve-list" id="solveList">
+        <div class="empty">Your solves will appear here after you finish your first attempt.</div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>Cubexa · Train smarter. Turn faster.</footer>
+
+<div class="modal-backdrop" id="sessionsModal">
+  <div class="modal">
+    <h2>Previous sessions</h2>
+    <p>Choose a saved session to continue. Your current session is saved automatically.</p>
+    <select id="sessionSelect" aria-label="Choose previous session"></select>
+    <div id="sessionDetails" class="notice"></div>
+    <div class="modal-actions">
+      <button class="btn" id="closeSessions">Cancel</button>
+      <button class="btn primary" id="continueSession">Continue session</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  const $ = id => document.getElementById(id);
+  const STORAGE_KEY = "cubexa-speedcube-sessions-v1";
+
+  let sessions = loadSessions();
+  let currentSession = null;
+  let state = "idle"; // idle, inspecting, ready, running, pending
+  let inspectionTimer = null;
+  let raf = null;
+  let startAt = 0;
+  let elapsed = 0;
+  let pendingTime = null;
+  let heldSpace = false;
+  let touchPoints = new Set();
+  let touchGesture = false;
+  let touchStartY = 0;
+  let lastTapAt = 0;
+
+  function loadSessions() {
+    try {
+      const data = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      return Array.isArray(data) ? data : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function persist() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+    } catch (err) {
+      alert("Your browser could not save session data. Check available storage.");
+    }
+  }
+
+  function makeSessionName(date = new Date()) {
+    return "Session · " + date.toLocaleDateString() + " " +
+      date.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+  }
+
+  function createSession() {
+    const session = {
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
+      name: makeSessionName(),
+      createdAt: Date.now(),
+      solves: []
+    };
+    sessions.unshift(session);
+    currentSession = session;
+    persist();
+    resetTimer();
+    render();
+  }
+
+  function resetTimer() {
+    clearTimeout(inspectionTimer);
+    cancelAnimationFrame(raf);
+    state = "idle";
+    elapsed = 0;
+    pendingTime = null;
+    heldSpace = false;
+    touchPoints.clear();
+    touchGesture = false;
+    $("penaltyRow").hidden = true;
+    $("penaltyHint").hidden = true;
+    $("timer").className = "";
+    $("timer").textContent = "0.00";
+    $("timerStatus").textContent = "Ready to solve?";
+    $("timerHint").innerHTML =
+      'Hold <span class="keyboard">SPACE</span> for 1 second, then release to start.<br>On touchscreens, press and hold with two fingers.';
+  }
+
+  function formatTime(ms) {
+    if (ms === null || ms === undefined || !Number.isFinite(ms)) return "—";
+    return (ms / 1000).toFixed(2);
+  }
+
+  function effectiveMs(solve) {
+    if (solve.penalty === "DNF") return Infinity;
+    return solve.rawMs + (solve.penalty === "+2" ? 2000 : 0);
+  }
+
+  function formatSolve(solve) {
+    if (solve.penalty === "DNF") return "DNF";
+    const ms = effectiveMs(solve);
+    return formatTime(ms) + (solve.penalty === "+2" ? "+" : "");
+  }
+
+  function mean(solves) {
+    if (!solves.length) return null;
+    const values = solves.map(effectiveMs);
+    if (values.some(v => !Number.isFinite(v))) return Infinity;
+    return values.reduce((a,b) => a+b, 0) / values.length;
+  }
+
+  function averageOf(count) {
+    const solves = currentSession.solves.slice(-count);
+    if (solves.length < count) {
+      return {value:null, note:`Need ${count - solves.length} more solve${count - solves.length === 1 ? "" : "s"}`};
+    }
+
+    let values = solves.map(effectiveMs).sort((a,b) => a-b);
+
+    if (count >= 5) {
+      // Exclude one fastest and one slowest result.
+      // DNF sorts as the slowest result.
+      values = values.slice(1, -1);
+    }
+
+    const value = values.some(v => !Number.isFinite(v))
+      ? Infinity
+      : values.reduce((a,b) => a+b, 0) / values.length;
+
+    return {value, note:`Last ${count} solves`};
+  }
+
+  function formatAverage(value) {
+    if (value === null) return "—";
+    if (value === Infinity) return "DNF";
+    return formatTime(value);
+  }
+
+  function render() {
+    if (!currentSession) return;
+
+    $("sessionLabel").textContent = currentSession.name;
+    const solves = currentSession.solves;
+    $("solveCount").textContent = solves.length;
+
+    const valid = solves.filter(s => s.penalty !== "DNF");
+    const best = valid.length ? Math.min(...valid.map(effectiveMs)) : null;
+    const worst = valid.length ? Math.max(...valid.map(effectiveMs)) : null;
+    $("bestTime").textContent = best === null ? "—" : formatTime(best);
+    $("worstTime").textContent = worst === null ? "—" : formatTime(worst);
+
+    const sessionAverage = solves.length ? mean(solves) : null;
+    $("sessionMean").textContent = sessionAverage === null ? "—" :
+      sessionAverage === Infinity ? "DNF" : formatTime(sessionAverage);
+
+    [3,5,10,20].forEach(n => {
+      const result = averageOf(n);
+      $("ao" + n).textContent = formatAverage(result.value);
+      $("ao" + n + "note").textContent = result.note;
+    });
+
+    const list = $("solveList");
+    list.innerHTML = "";
+
+    if (!solves.length) {
+      list.innerHTML = '<div class="empty">Your solves will appear here after you finish your first attempt.</div>';
+      return;
+    }
+
+    [...solves].reverse().forEach((solve, reversedIndex) => {
+      const actualIndex = solves.length - 1 - reversedIndex;
+      const row = document.createElement("div");
+      row.className = "solve";
+
+      const number = document.createElement("span");
+      number.className = "solve-number";
+      number.textContent = "#" + (actualIndex + 1);
+
+      const info = document.createElement("div");
+      const time = document.createElement("div");
+      time.className = "solve-time";
+      time.textContent = formatSolve(solve);
+
+      const detail = document.createElement("div");
+      detail.className = "solve-detail";
+      detail.textContent = new Date(solve.createdAt).toLocaleTimeString([], {
+        hour:"2-digit", minute:"2-digit", second:"2-digit"
+      });
+
+      info.append(time, detail);
+
+      const actions = document.createElement("div");
+      actions.className = "solve-actions";
+
+
+      ["OK","+2","DNF"].forEach(penalty => {
+        const btn = document.createElement("button");
+        btn.className = "small-btn";
+        btn.textContent = penalty;
+        btn.title = "Set solve " + (actualIndex + 1) + " to " + penalty;
+        btn.addEventListener("click", () => {
+          solve.penalty = penalty;
+          persist();
+          render();
+        });
+        actions.appendChild(btn);
+      });
+
+      // Delete button
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "small-btn";
+      deleteBtn.textContent = "Delete";
+      deleteBtn.title = "Delete solve " + (actualIndex + 1);
+
+ deleteBtn.addEventListener("click", () => {
+  const confirmed = document.createElement("span");
+  confirmed.className = "solve-actions";
+
+  const message = document.createElement("span");
+  message.textContent = "Delete this solve?";
+
+  const yesBtn = document.createElement("button");
+  yesBtn.className = "small-btn";
+  yesBtn.textContent = "Yes, delete";
+  yesBtn.addEventListener("click", () => {
+    solves.splice(actualIndex, 1);
+    persist();
+    render();
+  });
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.className = "small-btn";
+  cancelBtn.textContent = "Cancel";
+  cancelBtn.addEventListener("click", () => {
+    render();
+  });
+
+  confirmed.append(message, yesBtn, cancelBtn);
+  actions.replaceChildren(confirmed);
+});
+
+      actions.appendChild(deleteBtn);
+
+      row.append(number, info, actions);
+
+      list.appendChild(row);
+    });
+  }
+
+  function setTimerStatus(status, hint, className = "") {
+    $("timerStatus").textContent = status;
+    $("timerHint").innerHTML = hint;
+    $("timer").className = className;
+  }
+
+  function beginInspection() {
+    if (state !== "idle") return;
+    state = "inspecting";
+    setTimerStatus("Inspection", "Keep holding for 1 second…", "inspecting");
+    $("timer").textContent = "0.00";
+
+    const inspectionStarted = performance.now();
+    inspectionTimer = setTimeout(() => {
+      if (state !== "inspecting") return;
+      state = "ready";
+      setTimerStatus("Ready — release to start", "Release Space or lift your fingers to start the timer.", "ready");
+      $("timer").textContent = "0.00";
+    }, 1000);
+  }
+
+  function cancelInspection() {
+    if (state === "inspecting" || state === "ready") resetTimer();
+  }
+
+  function startTimer() {
+    if (state !== "ready" && state !== "idle") return;
+    clearTimeout(inspectionTimer);
+    state = "running";
+    startAt = performance.now();
+    setTimerStatus("Solving", "Press Space or tap once to stop.");
+    $("timer").className = "";
+    tick();
+  }
+
+  function tick() {
+    if (state !== "running") return;
+    elapsed = performance.now() - startAt;
+    $("timer").textContent = formatTime(elapsed);
+    raf = requestAnimationFrame(tick);
+  }
+
+  function stopTimer() {
+    if (state !== "running") return;
+    elapsed = performance.now() - startAt;
+    cancelAnimationFrame(raf);
+    pendingTime = elapsed;
+    state = "pending";
+    $("timer").textContent = formatTime(pendingTime);
+    setTimerStatus("Solve complete", "Choose a penalty below to save your result.");
+    $("penaltyRow").hidden = false;
+    $("penaltyHint").hidden = false;
+    $("saveOK").focus({preventScroll:true});
+  }
+
+  function saveSolve(penalty) {
+    if (state !== "pending" || pendingTime === null) return;
+    currentSession.solves.push({
+      rawMs: pendingTime,
+      penalty,
+      createdAt: Date.now(),
+      scramble: $("scramble").textContent
+    });
+    persist();
+    render();
+    nextScramble();
+    resetTimer();
+  }
+
+  function nextScramble() {
+    const faces = ["R","L","U","D","F","B"];
+    const suffixes = ["","'","2"];
+    const moves = [];
+    let lastFace = "";
+    for (let i=0; i<20; i++) {
+      let face;
+      do { face = faces[Math.floor(Math.random()*faces.length)]; }
+      while (face === lastFace);
+      lastFace = face;
+      moves.push(face + suffixes[Math.floor(Math.random()*suffixes.length)]);
+    }
+    $("scramble").textContent = moves.join(" ");
+  }
+
+// Keyboard controls: hold Space for inspection, release to start,
+// press Space again to stop.
+document.addEventListener("keydown", event => {
+  if (event.code !== "Space" || event.repeat) return;
+
+  // Prevent Space from activating buttons or scrolling the page.
+  event.preventDefault();
+
+  // Ignore other typing fields and links, but allow buttons.
+  if (event.target && ["A", "SELECT", "INPUT", "TEXTAREA"].includes(event.target.tagName)) return;
+
+  heldSpace = true;
+    if (state === "running") {
+      stopTimer();
+    } else if (state === "idle") {
+      beginInspection();
+    }
+  });
+
+  document.addEventListener("keyup", event => {
+    if (event.code !== "Space" || !heldSpace) return;
+    event.preventDefault();
+    heldSpace = false;
+
+    if (state === "inspecting") {
+      // Releasing before the full second cancels inspection.
+      cancelInspection();
+    } else if (state === "ready") {
+      startTimer();
+    }
+  });
+
+  // Touch controls: two separate simultaneous fingers held for 1 second
+  // to inspect; releasing both starts. One tap while running stops.
+  const area = $("timerArea");
+
+  area.addEventListener("touchstart", event => {
+    if (event.target.closest("button,a")) return;
+
+    if (state === "running") {
+      event.preventDefault();
+      stopTimer();
+      touchGesture = true;
+      return;
+    }
+
+    for (const touch of event.changedTouches) touchPoints.add(touch.identifier);
+
+    if (touchPoints.size >= 2 && state === "idle") {
+      event.preventDefault();
+      touchGesture = true;
+      beginInspection();
+    }
+  }, {passive:false});
+
+  area.addEventListener("touchend", event => {
+    for (const touch of event.changedTouches) touchPoints.delete(touch.identifier);
+
+    if (touchGesture && touchPoints.size === 0) {
+      if (state === "ready") startTimer();
+      else if (state === "inspecting") cancelInspection();
+      touchGesture = false;
+    }
+  }, {passive:true});
+
+  area.addEventListener("touchcancel", () => {
+    touchPoints.clear();
+    touchGesture = false;
+    if (state === "inspecting" || state === "ready") cancelInspection();
+  });
+
+  // A mouse click can stop a running timer too.
+  area.addEventListener("click", event => {
+    if (event.detail === 0) return; // Ignore synthetic keyboard clicks.
+    const now = Date.now();
+    if (now - lastTapAt < 350) return;
+    lastTapAt = now;
+    if (state === "running") stopTimer();
+  });
+
+  $("saveOK").addEventListener("click", () => saveSolve("OK"));
+  $("savePlus2").addEventListener("click", () => saveSolve("+2"));
+  $("saveDNF").addEventListener("click", () => saveSolve("DNF"));
+  $("newScramble").addEventListener("click", nextScramble);
+
+  $("newSession").addEventListener("click", () => {
+    if (state === "running" || state === "pending") {
+      if (!confirm("Start a new session? The current session will be saved, but the unfinished solve will not be recorded.")) return;
+    }
+    createSession();
+  });
+
+  const modal = $("sessionsModal");
+  $("openSessions").addEventListener("click", () => {
+    populateSessions();
+    modal.classList.add("open");
+  });
+  $("closeSessions").addEventListener("click", () => modal.classList.remove("open"));
+  modal.addEventListener("click", event => {
+    if (event.target === modal) modal.classList.remove("open");
+  });
+
+  function populateSessions() {
+    const select = $("sessionSelect");
+    select.innerHTML = "";
+    sessions.forEach(session => {
+      const option = document.createElement("option");
+      option.value = session.id;
+      option.textContent = session.name + " (" + session.solves.length + " solves)";
+      select.appendChild(option);
+    });
+    updateSessionDetails();
+  }
+
+  function updateSessionDetails() {
+    const session = sessions.find(s => s.id === $("sessionSelect").value);
+    $("sessionDetails").textContent = session
+      ? "Started " + new Date(session.createdAt).toLocaleString() +
+        ". " + session.solves.length + " solves saved."
+      : "No saved sessions yet.";
+    $("continueSession").disabled = !session;
+  }
+
+  $("sessionSelect").addEventListener("change", updateSessionDetails);
+
+  $("continueSession").addEventListener("click", () => {
+    const session = sessions.find(s => s.id === $("sessionSelect").value);
+    if (!session) return;
+    currentSession = session;
+    persist();
+    resetTimer();
+    render();
+    modal.classList.remove("open");
+  });
+
+  // Start a fresh session automatically on each visit.
+  // Existing sessions remain saved and can be continued.
+  createSession();
+  nextScramble();
+})();
+</script>
+</body>
+</html>
