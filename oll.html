@@ -1,0 +1,936 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>Cubexa — Train smarter. Turn faster.</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg:#0b1020;
+  --panel:#141e33;
+  --panel2:#1c2944;
+  --text:#eef3ff;
+  --muted:#a0afca;
+  --accent:#8496ff;
+  --border:#2d3b5b;
+  --green:#80e0b0;
+  --red:#ff9090;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:radial-gradient(ellipse at top,#192748,#0b1020 65%);
+  color:var(--text);
+  font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;
+  min-height:100vh;
+}
+button,input { font:inherit; }
+button {
+  cursor:pointer;
+  color:var(--text);
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:11px;
+  padding:10px 14px;
+  font-weight:650;
+}
+button:hover { background:#2a3a5c; }
+button:disabled { opacity:.5;cursor:not-allowed; }
+button.primary { background:#6376ed;border-color:#6376ed;color:white; }
+button.primary:hover { background:#7b8bff; }
+input[type=checkbox] {
+  accent-color:var(--accent);
+  width:17px;height:17px;
+}
+input[type=text] {
+  width:100%;padding:12px;border-radius:10px;
+  color:var(--text);background:#0c1426;border:1px solid var(--border);
+}
+header {
+  position:sticky;top:0;z-index:5;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:13px clamp(14px,4vw,38px);
+  background:#0b1020ed;border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px);
+}
+.brand { display:flex;align-items:center;gap:12px;min-width:0; }
+.brand-cube {
+  display:grid;
+  grid-template-columns:repeat(3,11px);
+  gap:3px;
+  padding:8px;
+  flex-shrink:0;
+  border-radius:12px;
+  background:#151d30;
+  border:1px solid #354563;
+  transform:rotate(-5deg);
+}
+.brand-cube span {
+  display:block;width:11px;height:11px;border-radius:3px;
+  background:#54d6ff;
+}
+.brand-cube span:nth-child(2),
+.brand-cube span:nth-child(4),
+.brand-cube span:nth-child(8) { background:#8b7bff; }
+.brand-cube span:nth-child(3),
+.brand-cube span:nth-child(6) { background:#42e6a4; }
+.brand-cube span:nth-child(5) { background:#ffca62; }
+.brand-cube span:nth-child(7) { background:#ff729d; }
+.brand-name {
+  font-size:clamp(1.45rem,3.5vw,2rem);
+  font-weight:950;
+  letter-spacing:-1px;
+  line-height:1.1;
+  background:linear-gradient(100deg,#fff 15%,#64d9ff 55%,#a78bfa 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.brand-slogan {
+  margin:5px 0 0;
+  font-size:.8rem;
+  letter-spacing:.25px;
+  color:var(--muted);
+  line-height:1.3;
+}
+main { width:min(1100px,100%);margin:auto;padding:28px 16px 55px; }
+h1 { font-size:clamp(1.7rem,4vw,2.5rem);line-height:1.15;margin:0 0 8px; }
+h2,h3 { line-height:1.25; }
+.subtitle,.muted,.status,.note { color:var(--muted); }
+.subtitle { margin:0 0 24px; }
+.panel {
+  background:#141e33ed;border:1px solid var(--border);border-radius:20px;
+  padding:clamp(15px,3vw,25px);box-shadow:0 18px 55px #0002;
+}
+.section-title { font-size:1.05rem;font-weight:800;margin:0 0 12px; }
+.mode-row,.actions { display:flex;align-items:center;gap:9px;flex-wrap:wrap; }
+.mode-row { margin-bottom:20px; }
+.toggle {
+  display:inline-flex;align-items:center;gap:9px;
+  padding:9px 12px;border:1px solid var(--border);
+  border-radius:11px;background:#0f182b;
+}
+.category-actions {
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px;
+  margin:-2px 0 12px;
+}
+.category-actions button {
+  padding:8px 12px;
+  font-size:.9rem;
+}
+.category-actions .select-all {
+  border-color:#5969b7;
+  background:#202d4d;
+}
+.category-actions .select-all:hover {
+  background:#30416b;
+  border-color:#8496ff;
+}
+.category-actions .deselect-all:hover {
+  border-color:#ff9090;
+}
+.category-grid { display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px; }
+.category-grid .toggle { font-size:.92rem; }
+.hidden { display:none!important; }
+.practice-layout {
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.85fr);
+  gap:22px;align-items:center;
+}
+.cube-stage {
+  min-height:280px;display:grid;place-items:center;text-align:center;
+  background:#0c1425;border:1px dashed #344566;border-radius:16px;padding:20px;
+}
+.pattern-image { max-width:100%;max-height:330px;object-fit:contain; }
+.info h2 { margin:0 0 7px;font-size:1.4rem; }
+.status { font-size:.9rem;margin:10px 0 15px; }
+.actions { margin-top:15px; }
+.alg {
+  font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
+  overflow-wrap:anywhere;
+}
+.help-box {
+  margin-top:14px;padding:13px;border-radius:12px;
+  background:#0c1425;border:1px solid var(--border);
+}
+.help-box .alg { line-height:2; }
+.answer-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px; }
+.answer-option { text-align:left;min-height:70px;overflow-wrap:anywhere; }
+.feedback { font-weight:750;margin-top:12px;overflow-wrap:anywhere; }
+.good { color:var(--green); }
+.bad { color:var(--red); }
+.wait-icon { font-size:5rem;line-height:1.2; }
+.footer-note { margin-top:18px;font-size:.85rem;color:var(--muted); }
+.overlay {
+  position:fixed;inset:0;z-index:20;padding:15px;
+  background:#030713cc;backdrop-filter:blur(6px);
+  display:grid;place-items:center;
+}
+.dialog {
+  width:min(900px,100%);max-height:90vh;overflow:auto;
+  background:#111a2e;border:1px solid #35476b;border-radius:18px;
+  padding:20px;box-shadow:0 25px 100px #0009;
+}
+.dialog-head {
+  display:flex;justify-content:space-between;align-items:center;
+  gap:12px;margin-bottom:12px;
+}
+.dialog-head h2 { margin:0;font-size:1.3rem; }
+.close-btn { font-size:1.2rem;padding:5px 12px; }
+.dialog-grid {
+  display:grid;grid-template-columns:210px minmax(0,1fr);gap:16px;
+}
+.sidebar { display:flex;flex-direction:column;gap:7px; }
+.sidebar button { text-align:left; }
+.sidebar button.selected { border-color:var(--accent);background:#2a385a; }
+.settings-content { min-width:0; }
+.setting-list { display:flex;flex-direction:column;gap:9px;margin-top:14px; }
+.setting-item {
+  display:grid;grid-template-columns:22px 82px minmax(0,1fr);
+  align-items:center;gap:10px;padding:10px;
+  background:#0c1425;border:1px solid var(--border);border-radius:12px;
+}
+.setting-item img,.no-image {
+  width:82px;height:72px;object-fit:contain;background:#080d18;border-radius:8px;
+}
+.no-image { display:grid;place-items:center;font-size:2rem; }
+.setting-name { font-weight:800;margin-bottom:3px; }
+.setting-help { color:#c4cee2;font-size:.9rem;line-height:1.6; }
+.settings-note { color:var(--muted);font-size:.9rem; }
+@media(max-width:720px) {
+  .practice-layout { grid-template-columns:1fr; }
+  .cube-stage { min-height:220px; }
+  .dialog-grid { grid-template-columns:1fr; }
+  .sidebar { display:grid;grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .answer-grid { grid-template-columns:1fr; }
+  .setting-item { grid-template-columns:20px 62px minmax(0,1fr);gap:8px;padding:8px; }
+  .setting-item img,.no-image { width:62px;height:60px; }
+}
+@media(max-width:420px) {
+  header { gap:8px;padding:12px; }
+  .brand { gap:9px; }
+  .brand-cube {
+    grid-template-columns:repeat(3,8px);
+    gap:2px;padding:6px;
+  }
+  .brand-cube span { width:8px;height:8px; }
+  .brand-slogan { font-size:.7rem; }
+  header > button { padding:8px;font-size:.8rem; }
+}
+</style>
+</head>
+<body>
+
+
+<header>
+  <a href="index.html" class="brand"
+     aria-label="Cubexa — Train smarter. Turn faster."
+     style="text-decoration: none; color: inherit; cursor: pointer;">
+    <div class="brand-cube" aria-hidden="true">
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+    </div>
+    <div>
+      <div class="brand-name">Cubexa</div>
+      <p class="brand-slogan">Train smarter. Turn faster.</p>
+    </div>
+  </a>
+
+  <button id="allGamemodesBtn" class="primary">
+    ☰ All Gamemodes
+  </button>
+</header>
+
+
+<main>
+  <h1>OLL Pattern Practice</h1>
+  <p class="subtitle">Practise patterns, test your algorithm recall, and customise your training.</p>
+
+  <section class="panel">
+    <h2 class="section-title">Game modes</h2>
+    <div class="mode-row">
+      <label class="toggle"><input type="checkbox" id="practiceMode"> Practice Mode</label>
+      <label class="toggle"><input type="checkbox" id="quizMode"> Quiz Mode</label>
+    </div>
+
+    <div id="quizStyleWrap" class="hidden">
+      <h3 class="section-title">Quiz answer styles</h3>
+      <div class="mode-row">
+        <label class="toggle"><input type="checkbox" id="typeMode"> Type Answer</label>
+        <label class="toggle"><input type="checkbox" id="choiceMode"> Multiple Choice</label>
+      </div>
+      <p class="note">Tick both to randomly alternate between typing and multiple choice.</p>
+    </div>
+
+    <h2 class="section-title">Shape categories</h2>
+
+    <div class="category-actions">
+      <button type="button" id="selectAllCategories" class="select-all">Select All Categories</button>
+      <button type="button" id="deselectAllCategories" class="deselect-all">Deselect All Categories</button>
+    </div>
+
+    <div id="categoryToggles" class="category-grid"></div>
+
+    <div id="waitingPanel" class="cube-stage">
+      <div>
+        <div class="wait-icon" aria-hidden="true">🧊</div>
+        <h2>Waiting to select gamemode</h2>
+        <p class="muted">Tick Practice Mode or Quiz Mode to begin.</p>
+      </div>
+    </div>
+
+    <div id="practicePanel" class="hidden">
+      <div class="practice-layout">
+        <div class="cube-stage">
+          <img id="practiceImage" class="pattern-image" alt="Current pattern">
+        </div>
+        <div class="info">
+          <h2 id="practiceName">Pattern</h2>
+          <div id="practiceStatus" class="status"></div>
+          <p class="muted">Identify the pattern, then reveal the algorithm if you need help.</p>
+          <div class="actions">
+            <button id="nextPatternBtn" class="primary">Next Pattern</button>
+            <button id="practiceHelpBtn">Help</button>
+          </div>
+          <div id="practiceHelpBox" class="help-box hidden">
+            <div class="muted">Algorithm</div>
+            <div id="practiceHelpText" class="alg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="quizPanel" class="hidden">
+      <div class="practice-layout">
+        <div class="cube-stage">
+          <img id="quizImage" class="pattern-image" alt="Quiz pattern">
+        </div>
+        <div class="info">
+          <h2>Algorithm Quiz</h2>
+          <div id="quizStatus" class="status"></div>
+          <div class="section-title">What is the algorithm for this pattern?</div>
+          <div id="typingArea" class="hidden">
+            <input id="typedAnswer" type="text" autocomplete="off" spellcheck="false" placeholder="Type the full algorithm…">
+            <div class="actions"><button id="checkTypedBtn" class="primary">Check Answer</button></div>
+          </div>
+          <div id="choicesArea" class="answer-grid hidden"></div>
+          <div id="quizFeedback" class="feedback" aria-live="polite"></div>
+          <div class="actions">
+            <button id="quizHelpBtn">Help — reveal next move</button>
+            <button id="nextQuizBtn" class="primary">Next Question</button>
+          </div>
+          <div id="quizHelpBox" class="help-box hidden">
+            <div class="muted">Moves revealed</div>
+            <div id="quizHelpText" class="alg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="settingsOverlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="dialog">
+    <div class="dialog-head">
+      <h2 id="settingsTitle">Cubexa · All Gamemodes &amp; Modify Shapes</h2>
+      <button id="closeSettingsBtn" class="close-btn" aria-label="Close">×</button>
+    </div>
+    <p class="settings-note">Choose a category below. Each algorithm has a checkbox, image, and help message. Changes are saved in this browser.</p>
+    <div class="dialog-grid">
+      <nav id="categorySidebar" class="sidebar" aria-label="Shape categories"></nav>
+      <div class="settings-content">
+        <h3 id="settingsCategoryTitle" class="section-title">Cross Patterns</h3>
+        <p id="settingsCategoryDescription" class="settings-note">Choose which algorithms to keep.</p>
+        <div class="actions" style="margin-top:0">
+          <button id="enableAllBtn">Select all algorithms</button>
+          <button id="disableAllBtn">Deselect all algorithms</button>
+        </div>
+        <div id="settingItems" class="setting-list"></div>
+      </div>
+    </div>
+    <div class="actions" style="justify-content:flex-end"><button id="doneSettingsBtn" class="primary">Done</button></div>
+  </div>
+</div>
+
+<script>
+const categories = {
+  cross:{label:"Cross Patterns",patterns:{
+    cross1:"R U R' U R U' R' U R U2' R'",
+    cross2:"R U2' (R2' U' R2 U' R2') U2' R",
+    cross3:"R2 D R' U2 R D' R' U2 R'",
+    cross4:"(r U R' U') (r' F R F')",
+    cross5:"(F R' F' r) (U R U' r')",
+    cross6:"R U2' R' U' R U' R'",
+    cross7:"R U R' U R U2' R'"
+  }},
+  line:{label:"Line Patterns",patterns:{
+    line1:"F (U R U' R') (U R U' R') F'",
+    line2:"R' F' U' F U' R U R' U R",
+    line3:"R' F U R U' R2' F' R2 U R' U' R",
+    line4:"r U r' (U R U' R') U R U' M' U' r'"
+  }},
+  dot:{label:"Dot Patterns",patterns:{
+    dot1:"R U2' (R2' F R F') U2' (R' F R F')",
+    dot2:"L F L' (U2 R U2' R' U2) L F' L'",
+    dot3:"r' R2 U R' U r U2' r' U M'",
+    dot4:"l L2' U' L U' l' U2 l U' M'",
+    dot5:"F R' F' R2 r' (U R U' R') U' M'",
+    dot6:"r U R' U R U2' r2' U' R U' R' U2' r",
+    dot7:"r' R U (R U R' U') M' (R' F R F')",
+    dot8:"(r U R' U') M2' (U R U' R') U' M'"
+  }},
+  square:{label:"Square Patterns",patterns:{
+    square1:"l' U2 L U L' U l",
+    square2:"r U2' R' U' R U' r'",
+    square3:"R U2' (R2' F R F') R U2' R'",
+    square4:"(F R' F' R) (U R U' R')"
+  }},
+  tetris:{label:"Tetris Patterns",patterns:{
+    tetris1:"r U R' U R U2' r'",
+    tetris2:"l' U' L U' L' U2 l",
+    tetris3:"S' U2 R U R' U R U2' R' S",
+    tetris4:"M' R' U' R U' R' U2 R U' R r'",
+    tetris5:"l D l' U l D' l2' U l U' l' U' l",
+    tetris6:"r' D' r U' r' D r2 U' r' U r U r'",
+    tetris7:"R U R' U R U2' R' F (R U R' U') F'",
+    tetris8:"(R' F R F') (R' F R F') (R U R' U') R U R'"
+  }},
+  knight:{label:"Knight Patterns",patterns:{
+    knight1:"F (U R U' R2') F' R (U R U' R')",
+    knight2:"R' F R U R' F' R F U' F'",
+    knight3:"l' U' l (L' U' L U) l' U l",
+    knight4:"r U r' (R U R' U') r U' r'"
+  }},
+  heart:{label:"Heart Patterns",patterns:{
+    heart1:"(R U R' U') R' F (R2 U R' U') F'",
+    heart2:"r R2' U2' R U R' U R U R r'",
+    heart3:"(F R' F' R) U2 R U' R' U R U2' R'",
+    heart4:"F (R U R' U') (R U R' U') F'",
+    heart5:"r U' r2' U r2 U r2' U' r",
+    heart6:"l' U l2 U' l2' U' l2 U l'",
+    heart7:"l' U' L U' L' U L U' L' U2 l",
+    heart8:"r U R' U R U' R' U R U2' r'"
+  }},
+  almostcomplete:{label:"Almost Complete",patterns:{
+    almostcomplete1:"(r U R' U') r' R (U R U' R')",
+    almostcomplete2:"(R U R' U') M' (U R U' r')"
+  }},
+  pshape:{label:"P-Shape Patterns",patterns:{
+    pshape1:"R' U' F (U R U' R') F' R",
+    pshape2:"L U F' (U' L' U L) F L'",
+    pshape3:"R' U' F' U F R",
+    pshape4:"F (U R U' R') F'"
+  }},
+  tshape:{label:"T-Shape Patterns",patterns:{
+    tshape1:"(R U R' U') (R' F R F')",
+    tshape2:"F (R U R' U') F'"
+  }},
+  cshape:{label:"C-Shape Patterns",patterns:{
+    cshape1:"f R f' U' r' U' R U M'",
+    cshape2:"R' U' (R' F R F') U R"
+  }},
+  wshape:{label:"W-Shape Patterns",patterns:{
+    wshape1:"L' U' L U' L' U L U (L F' L' F)",
+    wshape2:"R U R' U R U' R' U' (R' F R F')"
+  }},
+  lightningbolt:{label:"Lightning Bolt Patterns",patterns:{
+    lightningbolt1:"(f' L F L') (U' L' U L) S",
+    lightningbolt2:"(f R' F' R) (U R U' R') S'"
+  }}
+};
+
+const $ = id => document.getElementById(id);
+const categoryKeys = Object.keys(categories);
+const allPatterns = categoryKeys.flatMap(categoryKey =>
+  Object.entries(categories[categoryKey].patterns).map(([name,algorithm]) => ({
+    name,algorithm,categoryKey,categoryLabel:categories[categoryKey].label
+  }))
+);
+const storageKey = "cubexa-settings-v1";
+
+function readSaved() {
+  try { return JSON.parse(localStorage.getItem(storageKey) || "{}"); }
+  catch { return {}; }
+}
+
+const saved = readSaved();
+const enabledPatterns = {};
+allPatterns.forEach(p => {
+  enabledPatterns[p.name] = saved.enabledPatterns?.[p.name] ?? true;
+});
+
+let activeCategories = new Set(
+  Array.isArray(saved.activeCategories)
+    ? saved.activeCategories.filter(k => categories[k])
+    : categoryKeys
+);
+let practiceDeck = [];
+let currentPractice = null;
+let quizQuestion = null;
+let quizHelpMoves = 0;
+let quizAnswered = false;
+let settingsCategory = categoryKeys[0];
+
+function saveSettings() {
+  try {
+    localStorage.setItem(storageKey,JSON.stringify({
+      enabledPatterns,
+      activeCategories:[...activeCategories]
+    }));
+  } catch {}
+}
+
+function availablePatterns() {
+  return allPatterns.filter(
+    p => enabledPatterns[p.name] && activeCategories.has(p.categoryKey)
+  );
+}
+
+function shuffle(list) {
+  const a=[...list];
+  for(let i=a.length-1;i>0;i--) {
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function imagePath(name) {
+  return "images/"+name+".png";
+}
+
+function setImage(img,name) {
+  img.onerror=()=>{
+    img.onerror=null;
+    img.style.display="none";
+    const parent=img.parentElement;
+    if(parent && !parent.querySelector(".missing-image")) {
+      const note=document.createElement("div");
+      note.className="missing-image muted";
+      note.textContent="Image not found: "+imagePath(name);
+      parent.appendChild(note);
+    }
+  };
+  img.style.display="";
+  img.src=imagePath(name);
+  img.alt=name+" pattern";
+  const old=img.parentElement?.querySelector(".missing-image");
+  if(old) old.remove();
+}
+
+function renderCategoryToggles() {
+  const host=$("categoryToggles");
+  host.innerHTML="";
+
+  categoryKeys.forEach(key=>{
+    const label=document.createElement("label");
+    label.className="toggle";
+
+    const input=document.createElement("input");
+    input.type="checkbox";
+    input.checked=activeCategories.has(key);
+    input.addEventListener("change",()=>{
+      if(input.checked) activeCategories.add(key);
+      else activeCategories.delete(key);
+
+      saveSettings();
+      renderCategoryToggles();
+      renderSidebar();
+      renderSettingsItems();
+      refreshView(true);
+    });
+
+    label.append(input,document.createTextNode(categories[key].label));
+    host.appendChild(label);
+  });
+}
+
+/* Select or deselect all shape categories at once. */
+function setAllCategories(selected) {
+  activeCategories = new Set(selected ? categoryKeys : []);
+  saveSettings();
+  renderCategoryToggles();
+  renderSidebar();
+  renderSettingsItems();
+  refreshView(true);
+}
+
+$("selectAllCategories").addEventListener("click",()=>{
+  setAllCategories(true);
+});
+
+$("deselectAllCategories").addEventListener("click",()=>{
+  setAllCategories(false);
+});
+
+function renderSidebar() {
+  const host=$("categorySidebar");
+  host.innerHTML="";
+
+  categoryKeys.forEach(key=>{
+    const btn=document.createElement("button");
+    btn.textContent=categories[key].label;
+    btn.classList.toggle("selected",key===settingsCategory);
+    btn.addEventListener("click",()=>{
+      settingsCategory=key;
+      renderSidebar();
+      renderSettingsItems();
+    });
+    host.appendChild(btn);
+  });
+}
+
+function renderSettingsItems() {
+  $("settingsCategoryTitle").textContent=categories[settingsCategory].label;
+  $("settingsCategoryDescription").textContent=
+    "Tick the algorithms to keep them available in practice and quizzes.";
+
+  const host=$("settingItems");
+  host.innerHTML="";
+
+  Object.entries(categories[settingsCategory].patterns).forEach(([name,algorithm])=>{
+    const row=document.createElement("div");
+    row.className="setting-item";
+
+    const check=document.createElement("input");
+    check.type="checkbox";
+    check.checked=!!enabledPatterns[name];
+    check.setAttribute("aria-label","Keep "+name);
+    check.addEventListener("change",()=>{
+      enabledPatterns[name]=check.checked;
+      saveSettings();
+      refreshView(true);
+    });
+
+    const img=document.createElement("img");
+    img.src=imagePath(name);
+    img.alt=name+" image";
+    img.loading="lazy";
+    img.onerror=()=>{
+      const fallback=document.createElement("div");
+      fallback.className="no-image";
+      fallback.textContent="🧊";
+      fallback.title="Missing image: "+imagePath(name);
+      img.replaceWith(fallback);
+    };
+
+    const details=document.createElement("div");
+    const title=document.createElement("div");
+    title.className="setting-name";
+    title.textContent=name;
+
+    const help=document.createElement("div");
+    help.className="setting-help alg";
+    help.textContent=algorithm;
+
+    details.append(title,help);
+    row.append(check,img,details);
+    host.appendChild(row);
+  });
+}
+
+function openSettings() {
+  $("settingsOverlay").classList.remove("hidden");
+  renderSidebar();
+  renderSettingsItems();
+}
+
+function closeSettings() {
+  $("settingsOverlay").classList.add("hidden");
+}
+
+function refillPracticeDeck() {
+  practiceDeck=shuffle(availablePatterns());
+
+  if(practiceDeck.length>1 && currentPractice &&
+     practiceDeck[practiceDeck.length-1]?.name===currentPractice.name) {
+    [practiceDeck[0],practiceDeck[practiceDeck.length-1]] =
+      [practiceDeck[practiceDeck.length-1],practiceDeck[0]];
+  }
+}
+
+function nextPractice() {
+  const list=availablePatterns();
+
+  if(!list.length) {
+    currentPractice=null;
+    practiceDeck=[];
+    $("practiceName").textContent="No patterns selected";
+    $("practiceStatus").textContent="Select a shape category and enable at least one algorithm.";
+    $("practiceImage").style.display="none";
+    $("practiceHelpBox").classList.add("hidden");
+    return;
+  }
+
+  if(!practiceDeck.length || !practiceDeck.some(
+    p=>list.some(a=>a.name===p.name)
+  )) {
+    refillPracticeDeck();
+  }
+
+  practiceDeck=practiceDeck.filter(p=>list.some(a=>a.name===p.name));
+  if(!practiceDeck.length) refillPracticeDeck();
+
+  currentPractice=practiceDeck.pop();
+  $("practiceName").textContent=currentPractice.name.toUpperCase();
+  $("practiceStatus").textContent=
+    currentPractice.categoryLabel+" · "+practiceDeck.length+" pattern(s) remaining this round";
+
+  setImage($("practiceImage"),currentPractice.name);
+  $("practiceHelpText").textContent=currentPractice.algorithm;
+  $("practiceHelpBox").classList.add("hidden");
+}
+
+function selectedQuizStyle() {
+  const type=$("typeMode").checked;
+  const choice=$("choiceMode").checked;
+
+  if(type && choice) return Math.random()<0.5 ? "type" : "choice";
+  if(type) return "type";
+  if(choice) return "choice";
+  return null;
+}
+
+function normalizeAnswer(value) {
+  return value.trim().replace(/\s+/g," ");
+}
+
+function nextQuiz() {
+  const list=availablePatterns();
+  const style=selectedQuizStyle();
+
+  if(!list.length) {
+    quizQuestion=null;
+    $("quizStatus").textContent="No patterns selected. Enable some shape categories and algorithms.";
+    $("quizImage").style.display="none";
+    $("typingArea").classList.add("hidden");
+    $("choicesArea").classList.add("hidden");
+    $("quizFeedback").textContent="";
+    $("quizHelpBox").classList.add("hidden");
+    return;
+  }
+
+  if(!style) {
+    quizQuestion=null;
+    $("quizStatus").textContent="Select Type Answer and/or Multiple Choice above.";
+    $("quizImage").style.display="none";
+    $("typingArea").classList.add("hidden");
+    $("choicesArea").classList.add("hidden");
+    $("quizFeedback").textContent="";
+    $("quizHelpBox").classList.add("hidden");
+    return;
+  }
+
+  const pool=list.filter(p=>p.name!==quizQuestion?.name);
+  const choices=pool.length ? pool : list;
+
+  quizQuestion={
+    ...choices[Math.floor(Math.random()*choices.length)],
+    style
+  };
+  quizHelpMoves=0;
+  quizAnswered=false;
+
+  $("quizStatus").textContent=quizQuestion.categoryLabel+" · "+
+    (style==="type"?"Type the algorithm":"Choose the correct algorithm");
+
+  setImage($("quizImage"),quizQuestion.name);
+  $("typingArea").classList.toggle("hidden",style!=="type");
+  $("choicesArea").classList.toggle("hidden",style!=="choice");
+  $("typedAnswer").value="";
+  $("quizFeedback").textContent="";
+  $("quizFeedback").className="feedback";
+  $("quizHelpText").textContent="";
+  $("quizHelpBox").classList.add("hidden");
+  $("quizHelpBtn").textContent="Help — reveal next move";
+
+  if(style==="choice") renderChoices(quizQuestion);
+}
+
+function renderChoices(correct) {
+  const host=$("choicesArea");
+  host.innerHTML="";
+
+  // Distractors come from other algorithms. Duplicate algorithm strings
+  // are removed so the same answer cannot appear twice.
+  const distinct=new Map();
+
+  allPatterns.forEach(p=>{
+    if(p.algorithm!==correct.algorithm) {
+      distinct.set(p.algorithm,p.algorithm);
+    }
+  });
+
+  const distractors=shuffle([...distinct.keys()]).slice(0,3);
+
+  const options=shuffle([
+    {algorithm:correct.algorithm,isCorrect:true},
+    ...distractors.map(algorithm=>({algorithm,isCorrect:false}))
+  ]);
+
+  options.forEach(option=>{
+    const btn=document.createElement("button");
+    btn.className="answer-option";
+    btn.textContent=option.algorithm;
+
+    btn.addEventListener("click",()=>{
+      if(quizAnswered) return;
+      quizAnswered=true;
+      showFeedback(option.isCorrect);
+      host.querySelectorAll("button").forEach(b=>b.disabled=true);
+    });
+
+    host.appendChild(btn);
+  });
+}
+
+function showFeedback(correct) {
+  $("quizFeedback").textContent=correct
+    ? "Correct! Nice work."
+    : "Not quite. The correct algorithm is: "+quizQuestion.algorithm;
+
+  $("quizFeedback").className="feedback "+(correct?"good":"bad");
+}
+
+function checkTypedAnswer() {
+  if(!quizQuestion || quizAnswered) return;
+
+  const correct=normalizeAnswer($("typedAnswer").value)===
+                normalizeAnswer(quizQuestion.algorithm);
+
+  quizAnswered=true;
+  showFeedback(correct);
+}
+
+function revealPracticeHelp() {
+  if(!currentPractice) return;
+  $("practiceHelpText").textContent=currentPractice.algorithm;
+  $("practiceHelpBox").classList.remove("hidden");
+}
+
+function revealQuizMove() {
+  if(!quizQuestion) return;
+
+  const moves=quizQuestion.algorithm.trim().split(/\s+/);
+  quizHelpMoves=Math.min(quizHelpMoves+1,moves.length);
+
+  $("quizHelpText").textContent=moves.slice(0,quizHelpMoves).join(" ");
+  $("quizHelpBox").classList.remove("hidden");
+  $("quizHelpBtn").textContent=quizHelpMoves>=moves.length
+    ? "All moves revealed"
+    : "Help — reveal next move";
+}
+
+function renderQuizStyle() {
+  const quizOn=$("quizMode").checked;
+  $("quizStyleWrap").classList.toggle("hidden",!quizOn);
+
+  if(!quizOn) {
+    $("typeMode").checked=false;
+    $("choiceMode").checked=false;
+  }
+}
+
+function refreshView(resetQuestion=false) {
+  const practiceOn=$("practiceMode").checked;
+  const quizOn=$("quizMode").checked;
+
+  $("waitingPanel").classList.toggle("hidden",practiceOn||quizOn);
+  $("practicePanel").classList.toggle("hidden",!practiceOn);
+  $("quizPanel").classList.toggle("hidden",!quizOn);
+
+  renderQuizStyle();
+
+  const list=availablePatterns();
+
+  if(practiceOn && (
+    !currentPractice ||
+    !list.some(p=>p.name===currentPractice.name)
+  )) {
+    nextPractice();
+  }
+
+  if(quizOn && (
+    resetQuestion ||
+    !quizQuestion ||
+    !list.some(p=>p.name===quizQuestion.name)
+  )) {
+    nextQuiz();
+  }
+
+  if(!practiceOn && !quizOn) {
+    currentPractice=null;
+    quizQuestion=null;
+  }
+}
+
+$("practiceMode").addEventListener("change",()=>refreshView(true));
+$("quizMode").addEventListener("change",()=>refreshView(true));
+$("typeMode").addEventListener("change",()=>{
+  if($("quizMode").checked) nextQuiz();
+});
+$("choiceMode").addEventListener("change",()=>{
+  if($("quizMode").checked) nextQuiz();
+});
+$("nextPatternBtn").addEventListener("click",nextPractice);
+$("practiceHelpBtn").addEventListener("click",revealPracticeHelp);
+$("quizHelpBtn").addEventListener("click",revealQuizMove);
+$("nextQuizBtn").addEventListener("click",nextQuiz);
+$("checkTypedBtn").addEventListener("click",checkTypedAnswer);
+
+$("typedAnswer").addEventListener("keydown",event=>{
+  if(event.key==="Enter") checkTypedAnswer();
+});
+
+$("allGamemodesBtn").addEventListener("click",openSettings);
+$("closeSettingsBtn").addEventListener("click",closeSettings);
+$("doneSettingsBtn").addEventListener("click",closeSettings);
+
+$("settingsOverlay").addEventListener("click",event=>{
+  if(event.target===$("settingsOverlay")) closeSettings();
+});
+
+$("enableAllBtn").addEventListener("click",()=>{
+  Object.keys(categories[settingsCategory].patterns).forEach(
+    name=>enabledPatterns[name]=true
+  );
+  saveSettings();
+  renderSettingsItems();
+  refreshView(true);
+});
+
+$("disableAllBtn").addEventListener("click",()=>{
+  Object.keys(categories[settingsCategory].patterns).forEach(
+    name=>enabledPatterns[name]=false
+  );
+  saveSettings();
+  renderSettingsItems();
+  refreshView(true);
+});
+
+document.addEventListener("keydown",event=>{
+  if(event.key==="Escape") closeSettings();
+  if(event.target.matches("input,textarea,select")) return;
+
+  if(event.code==="Space" &&
+     $("practiceMode").checked &&
+     !$("quizMode").checked) {
+    event.preventDefault();
+    nextPractice();
+  }
+
+  if(event.key.toLowerCase()==="h" &&
+     $("practiceMode").checked &&
+     !$("quizMode").checked) {
+    revealPracticeHelp();
+  }
+});
+
+renderCategoryToggles();
+refreshView();
+</script>
+</body>
+</html>
